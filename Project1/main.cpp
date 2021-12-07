@@ -1,20 +1,15 @@
 
 #include <iostream>
-#include <string>
+
+#include "test_prime.h"
 
 using namespace std;
 
-#define STR_SIZE 3
 
 int main() {
-    string str;
-    for (int i = 1; i < 12; i++) {
-        for (int j = 1; j < 12; j++) {
-            str = to_string(i * j);
-            str.resize(STR_SIZE, ' ');
-            cout << str << "|";
-        }
-        cout << endl;
+
+    for (unsigned int i = 2; i < 50; i++) {
+        cout << "is " << i << " prime? " << (is_prime(i) ? "yes" : "no") << endl;
     }
 
     return 0;
