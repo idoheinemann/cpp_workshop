@@ -1,21 +1,24 @@
 
 #include <iostream>
-#include <string>
+
+#include "memory_manager.h"
 
 using namespace std;
 
-#define STR_SIZE 3
-
 int main() {
-    string str;
-    for (int i = 1; i < 12; i++) {
-        for (int j = 1; j < 12; j++) {
-            str = to_string(i * j);
-            str.resize(STR_SIZE, ' ');
-            cout << str << "|";
-        }
-        cout << endl;
-    }
-
+    int* x = new int(3);
+    *x = 7;
+    print_allocations();
+    bool* b = new bool(false);
+    *b = true;
+    char* chr = new char[50];
+    chr[10] = 'i';
+    delete b;
+    print_allocations();
+    delete[] chr;
+    print_allocations();
+    char* chr2 = new char[20];
+    chr2[1] = '3'; // should replace old 50, size remains 50
+    print_allocations();
     return 0;
 }
