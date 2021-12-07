@@ -15,16 +15,14 @@ int main() {
     try {
         cout << "2/0: " << calc.calculate(2, '/', 0) << endl;
     }
-    catch (CalculatorException e) {
-        if (e == CalculatorException::DIVIDE_BY_ZERO)
+    catch (DivideByZeroException e) {
         cout << "Caused Exception: Divide by 0" << endl;
     }
     try {
         cout << "10^3: " << calc.calculate(10, '^', 3) << endl;
     }
-    catch (CalculatorException e) {
-        if (e == CalculatorException::UNKNOWN_OPERATION)
-            cout << "Caused Exception: Unknown Operation" << endl;
+    catch (UnknownOperatorException e) {
+        cout << "Caused Exception: Unknown Operation" << endl;
     }
 
     return 0;
