@@ -18,7 +18,7 @@ int main() {
     delete[] chr;
     print_allocations();
     char* chr2 = new char[20];
-    chr2[1] = '3'; // should replace old 50, size remains 50
+    chr2[1] = '3';
     print_allocations();
     return 0;
 }

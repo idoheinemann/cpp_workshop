@@ -4,6 +4,7 @@
 #include "memory_manager.h"
 
 MemoryBlock* first_block = nullptr;
+MemoryBlock* last_block = nullptr;
 
 MemoryBlock* new_mem_block(size_t size)
 {
@@ -11,9 +12,10 @@ MemoryBlock* new_mem_block(size_t size)
 	if (mem == nullptr) {
 		throw std::bad_alloc();
 	}
-	mem[0].is_allocated = true;
-	mem[0].next_block = nullptr;
-	mem[0].size = size;
+	mem->is_allocated = true;
+	mem->next_block = nullptr;
+	mem->prev_block = nullptr;
+	mem->size = size;
 	return mem;
 }
 
@@ -21,20 +23,13 @@ void* allocate(size_t size)
 {
 	if (first_block == nullptr) {
 		first_block = new_mem_block(size);
+		last_block = first_block;
 		return static_cast<void*>(first_block + 1);
 	}
-	MemoryBlock* prev_block = nullptr;
-	MemoryBlock* block = first_block;
-	while (block != nullptr) {
-		if ((!block->is_allocated) && block->size >= size) {
-			block->is_allocated = true;
-			return static_cast<void*>(block + 1);
-		}
-		prev_block = block;
-		block = block->next_block;
-	}
-	block = new_mem_block(size);
-	prev_block->next_block = block;
+	MemoryBlock* block = new_mem_block(size);
+	last_block->next_block = block;
+	block->prev_block = last_block;
+	last_block = block;
 	return static_cast<void*>(block + 1);
 }
 
@@ -52,7 +47,19 @@ void* __cdecl operator new[](std::size_t size)
 
 void deallocate(void* addr) {
 	MemoryBlock* block = static_cast<MemoryBlock*>(addr) - 1;
-	block->is_allocated = false;
+	if (block == last_block) {
+		last_block = block->prev_block;
+	}
+	if (block == first_block) {
+		first_block = block->next_block;
+	}
+	if (block->prev_block != nullptr) {
+		block->prev_block->next_block = block->next_block;
+	}
+	if (block->next_block != nullptr) {
+		block->next_block->prev_block = block->prev_block;
+	}
+	free(static_cast<void*>(block));
 }
 
 void operator delete(void* addr)
@@ -69,8 +76,7 @@ void operator delete[](void* addr)
 void print_allocations() {
 	MemoryBlock* block = first_block;
 	while (block != nullptr) {
-		std::cout << "Memory Block at " << block << ": <size - " << block->size << ", allocated - "
-			<< (block->is_allocated ? "true" : "false") << ">" << std::endl;
+		std::cout << "Memory Block at " << block << ": <size - " << block->size << ">" << std::endl;
 		block = block->next_block;
 	}
 }

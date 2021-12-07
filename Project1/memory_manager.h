@@ -9,6 +9,7 @@ struct MemoryBlock {
 	bool is_allocated;
 	size_t size;
 	MemoryBlock* next_block;
+	MemoryBlock* prev_block;
 };
 
 _NODISCARD _Ret_notnull_ _Post_writable_byte_size_(size) _VCRT_ALLOCATOR
